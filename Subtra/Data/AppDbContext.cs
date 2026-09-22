@@ -13,4 +13,15 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
     }
 
     public DbSet<Category> Categories => Set<Category>();
+    public DbSet<Subscription> Subscriptions => Set<Subscription>();
+    public DbSet<BillingInterval> BillingIntervals => Set<BillingInterval>();
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        builder.Entity<Subscription>()
+            .Property(s => s.Price)
+            .HasPrecision(18, 2);
+    }
 }

@@ -1,6 +1,0 @@
-{
-	"nodes":[
-		{"id":"6ce6c8fc4ecdd33c","type":"text","text":"\n```mermaid\nerDiagram\n    USER ||--o{ SUBSCRIPTION : owns\n    USER ||--o{ CATEGORY : owns\n    CATEGORY ||--o{ SUBSCRIPTION : groups\n    BILLING_INTERVAL ||--o{ SUBSCRIPTION : defines\n```","x":-500,"y":-60,"width":620,"height":638}
-	],
-	"edges":[]
-}

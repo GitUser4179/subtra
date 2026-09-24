@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Subtra.Api.Data;
+using Subtra.Api.Features.BillingIntervals;
+using Scalar.AspNetCore;
 
 namespace Subtra;
 
@@ -13,6 +15,8 @@ public class Program
             options.UseSqlServer(
                 builder.Configuration.GetConnectionString("DefaultConnection")));
 
+        builder.Services.AddScoped<BillingIntervalsService>();
+
         // Add services to the container.
 
         builder.Services.AddControllers();
@@ -25,6 +29,8 @@ public class Program
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
+
+            app.MapScalarApiReference();
         }
 
         app.UseHttpsRedirection();

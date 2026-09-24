@@ -20,6 +20,13 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
     {
         base.OnModelCreating(builder);
 
+        builder.Entity<BillingInterval>()
+            .HasData
+                (
+                new BillingInterval { Id = 1, Months = 1, Name = "Monthly" },
+                new BillingInterval { Id = 2, Months = 12, Name = "Yearly"}
+                );
+
         builder.Entity<Subscription>()
             .Property(s => s.Price)
             .HasPrecision(18, 2);

@@ -16,24 +16,25 @@ jobs:
       contents: read #This is required for actions/checkout
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Node.js version
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v7
         with:
           node-version: '24.x'
 
-      - name: npm install, build, and test
+      - name: install, lint, and build frontend
+        working-directory: frontend
         run: |
-          npm install
-          npm run build --if-present
-          npm run test --if-present
+          npm ci
+          npm run lint
+          npm run build
 
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: node-app
-          path: .
+          path: frontend/dist
 
   deploy:
     runs-on: ubuntu-latest
@@ -44,12 +45,12 @@ jobs:
 
     steps:
       - name: Download artifact from build job
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: node-app
       
       - name: Login to Azure
-        uses: azure/login@v2
+        uses: azure/login@v3
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_4807D9241BDA4C618C7FF4C5070874D5 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_97CA9FEC106043B3990438F7ABE4B1EA }}

@@ -62,13 +62,31 @@ public class Program
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
 
+        // fetches the list of allowed origins from builder config
+        var allowedOrigins = builder.Configuration
+            .GetSection("Cors:AllowedOrigins")
+            .Get<string[]>()
+            ?? throw new InvalidOperationException("CORS origins are missing.");
+
+        // adds the allowed origins to the policy, and permits credentials to be passed through it
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("Frontend", policy =>
+            {
+                policy.WithOrigins(allowedOrigins)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            });
+        });
+
         var app = builder.Build();
 
         app.MapOpenApi();
         app.MapScalarApiReference();
-
+       
         app.UseHttpsRedirection();
-
+        app.UseCors("Frontend");
         app.UseAuthentication();
         app.UseAuthorization();
 

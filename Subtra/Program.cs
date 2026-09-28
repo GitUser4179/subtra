@@ -6,7 +6,7 @@ using Scalar.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Subtra;
+namespace Subtra.Api;
 
 public class Program
 {

@@ -52,3 +52,18 @@ export async function getCurrentUser() {
 
   return response.json()
 }
+
+export async function logout() {
+  const csrfToken = await getCsrfToken()
+  const response = await fetch(`${apiBaseUrl}/api/auth/logout`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "X-CSRF-TOKEN": csrfToken,
+    },
+  })
+
+  if (!response.ok) {
+    throw new Error("Could not logout.")
+  }
+}

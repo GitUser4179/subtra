@@ -37,7 +37,7 @@ public class Program
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             options.Cookie.SameSite = builder.Environment.IsDevelopment()
                 ? SameSiteMode.Lax
-                : SameSiteMode.None; // limits when the browser sends this cookie with requests from other sites.
+                : SameSiteMode.None;
             options.ExpireTimeSpan = TimeSpan.FromHours(1);
         });
 

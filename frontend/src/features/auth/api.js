@@ -67,3 +67,27 @@ export async function logout() {
     throw new Error("Could not logout.")
   }
 }
+
+export async function register(email, password) {
+  const csrfToken = await getCsrfToken()
+
+  if (csrfToken == null) {
+    throw new Error("Failed to fetch CSRF token")
+  }
+
+  const response = await fetch(`${apiBaseUrl}/api/auth/register`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRF-TOKEN": csrfToken,
+    },
+    body: JSON.stringify({ email, password }),
+  })
+
+  if (!response.ok) {
+    throw new Error("Registration failed.")
+  }
+
+  return response
+}

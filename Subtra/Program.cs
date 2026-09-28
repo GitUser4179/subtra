@@ -35,7 +35,9 @@ public class Program
         {
             options.Cookie.HttpOnly = true;
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-            options.Cookie.SameSite = SameSiteMode.Lax; // limits when the browser sends this cookie with requests from other sites.
+            options.Cookie.SameSite = builder.Environment.IsDevelopment()
+                ? SameSiteMode.Lax
+                : SameSiteMode.None;
             options.ExpireTimeSpan = TimeSpan.FromHours(1);
         });
 
@@ -46,7 +48,9 @@ public class Program
             options.HeaderName = "X-CSRF-TOKEN";
             options.Cookie.HttpOnly = true;
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-            options.Cookie.SameSite = SameSiteMode.Lax;
+            options.Cookie.SameSite = builder.Environment.IsDevelopment()
+                ? SameSiteMode.Lax
+                : SameSiteMode.None;
         });
         
         // scopes

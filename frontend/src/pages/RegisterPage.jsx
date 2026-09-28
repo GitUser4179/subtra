@@ -1,11 +1,12 @@
 import { Box, Card, Stack, Typography, TextField, Button } from "@mui/material"
 import { useState } from "react"
-import { getCurrentUser, login } from "../features/auth/api"
-import { Link } from "react-router"
+import { register } from "../features/auth/api"
+import { Link, useNavigate } from "react-router"
 
-export default function LoginPage({ onLogin }) {
+export default function RegisterPage() {
   const [errorMessage, setErrorMessage] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const navigate = useNavigate()
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -17,17 +18,12 @@ export default function LoginPage({ onLogin }) {
     const email = formData.get("email")
     const password = formData.get("password")
     try {
-      await login(email, password)
-      const currentUser = await getCurrentUser()
+      await register(email, password)
 
-      if (currentUser === null) {
-        throw new Error("Could not confirm the signed-in session.")
-      }
-
-      onLogin(currentUser)
+      navigate("/login")
     } catch (error) {
       console.error(error)
-      setErrorMessage("Could not login, please try again.")
+      setErrorMessage("Could not register, please try again.")
     } finally {
       setIsSubmitting(false)
     }
@@ -38,14 +34,14 @@ export default function LoginPage({ onLogin }) {
       <Card variant="outlined" sx={{ width: "100%", maxWidth: 450, p: 4 }}>
         <Stack component="form" spacing={3} onSubmit={handleSubmit}>
           <Typography component="h1" variant="h4">
-            Sign in to subtra
+            Register
           </Typography>
 
           <TextField
             label="Email"
             name="email"
             type="email"
-            autoComplete="username"
+            autoComplete="email"
             required
             fullWidth
           />
@@ -54,16 +50,16 @@ export default function LoginPage({ onLogin }) {
             label="Password"
             name="password"
             type="password"
-            autoComplete="current-password"
+            autoComplete="new-password"
             required
             fullWidth
           />
 
           <Button disabled={isSubmitting} type="submit" variant="contained" fullWidth>
-            {isSubmitting ? "Signing in..." : "Sign in"}
+            {isSubmitting ? "Creating account..." : "Register"}
           </Button>
           {errorMessage && <Typography role="alert">{errorMessage}</Typography>}
-          <Link to="/register">Create an account</Link>
+          <Link to="/login">Already have an account? Sign in.</Link>
         </Stack>
       </Card>
     </Box>

@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react"
 import { getBillingIntervals } from "./features/billing-intervals/api"
 import { getCurrentUser, logout } from "./features/auth/api"
+import { Routes, Route, Navigate } from "react-router"
 import LoginPage from "./pages/LoginPage"
+import RegisterPage from "./pages/RegisterPage"
+import NotFoundPage from "./pages/NotFoundPage"
 
 function App() {
   const [billingIntervals, setBillingIntervals] = useState([])
@@ -52,32 +55,42 @@ function App() {
     }
   }
 
+  if (isCheckingSession) return <p>Checking session...</p>
   return (
-    <>
-      {isCheckingSession ? (
-        <p>Checking session...</p>
-      ) : user ? (
-        <>
-          <p>Signed in as {user.email}</p>
-          <button type="button" onClick={handleLogout}>
-            Log out
-          </button>
-        </>
-      ) : (
-        <LoginPage onLogin={setUser} />
-      )}
-      <button type="button" disabled={isLoading} onClick={handleLoadBillingIntervals}>
-        {isLoading ? "Loading..." : "Load billing intervals"}
-      </button>
-      {errorMessage && <p role="alert">{errorMessage}</p>}
-      <ul>
-        {billingIntervals.map((interval) => (
-          <li key={interval.id}>
-            {interval.name} - {interval.months} month(s)
-          </li>
-        ))}
-      </ul>
-    </>
+    <Routes>
+      <Route
+        path="/"
+        element={
+          user ? (
+            <>
+              <p>Signed in as {user.email}</p>
+              <button type="button" onClick={handleLogout}>
+                Log out
+              </button>
+              <button type="button" disabled={isLoading} onClick={handleLoadBillingIntervals}>
+                {isLoading ? "Loading..." : "Load billing intervals"}
+              </button>
+              {errorMessage && <p role="alert">{errorMessage}</p>}
+              <ul>
+                {billingIntervals.map((interval) => (
+                  <li key={interval.id}>
+                    {interval.name} - {interval.months} month(s)
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+      <Route
+        path="/login"
+        element={user ? <Navigate to="/" replace /> : <LoginPage onLogin={setUser} />}
+      />
+      <Route path="/register" element={user ? <Navigate to="/" replace /> : <RegisterPage />} />
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
   )
 }
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { getBillingIntervals } from "./features/billing-intervals/api"
-import { getCurrentUser } from "./features/auth/api"
+import { getCurrentUser, logout } from "./features/auth/api"
 import LoginPage from "./pages/LoginPage"
 
 function App() {
@@ -25,6 +25,18 @@ function App() {
     checkSession()
   }, [])
 
+  async function handleLogout() {
+    setErrorMessage("")
+
+    try {
+      await logout()
+      setUser(null)
+    } catch (error) {
+      console.error(error)
+      setErrorMessage("Could not logout, please try again.")
+    }
+  }
+
   async function handleLoadBillingIntervals() {
     setIsLoading(true)
     setErrorMessage("")
@@ -39,12 +51,18 @@ function App() {
       setIsLoading(false)
     }
   }
+
   return (
     <>
       {isCheckingSession ? (
         <p>Checking session...</p>
       ) : user ? (
-        <p>Signed in as {user.email}</p>
+        <>
+          <p>Signed in as {user.email}</p>
+          <button type="button" onClick={handleLogout}>
+            Log out
+          </button>
+        </>
       ) : (
         <LoginPage onLogin={setUser} />
       )}
@@ -52,7 +70,6 @@ function App() {
         {isLoading ? "Loading..." : "Load billing intervals"}
       </button>
       {errorMessage && <p role="alert">{errorMessage}</p>}
-
       <ul>
         {billingIntervals.map((interval) => (
           <li key={interval.id}>

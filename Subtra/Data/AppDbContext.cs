@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Subtra.Api.Entities;
@@ -30,5 +30,11 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
         builder.Entity<Subscription>()
             .Property(s => s.Price)
             .HasPrecision(18, 2);
+
+        builder.Entity<Subscription>()
+            .HasOne(s => s.Category)
+            .WithMany()
+            .HasForeignKey(s => s.CategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

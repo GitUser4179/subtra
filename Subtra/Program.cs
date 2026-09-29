@@ -5,6 +5,7 @@ using Subtra.Api.Features.Auth;
 using Scalar.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Subtra.Api.Features.Categories;
 
 namespace Subtra.Api;
 
@@ -56,6 +57,7 @@ public class Program
         // scopes
         builder.Services.AddScoped<BillingIntervalsService>();
         builder.Services.AddScoped<AuthService>();
+        builder.Services.AddScoped<CategoryService>();
 
         // Add services to the container.
 

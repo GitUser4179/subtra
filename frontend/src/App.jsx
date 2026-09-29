@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react"
 import { getBillingIntervals } from "./features/billing-intervals/api"
 import { getCurrentUser, logout } from "./features/auth/api"
-import { Routes, Route, Navigate } from "react-router"
+import { Link, Routes, Route, Navigate } from "react-router"
 import LoginPage from "./pages/LoginPage"
 import RegisterPage from "./pages/RegisterPage"
 import NotFoundPage from "./pages/NotFoundPage"
+import CategoriesPage from "./pages/CategoriesPage"
 
 function App() {
   const [billingIntervals, setBillingIntervals] = useState([])
@@ -64,6 +65,7 @@ function App() {
           user ? (
             <>
               <p>Signed in as {user.email}</p>
+              <Link to="/categories">Categories</Link>
               <button type="button" onClick={handleLogout}>
                 Log out
               </button>
@@ -90,6 +92,10 @@ function App() {
       />
       <Route path="/register" element={user ? <Navigate to="/" replace /> : <RegisterPage />} />
       <Route path="*" element={<NotFoundPage />} />
+      <Route
+        path="categories"
+        element={user ? <CategoriesPage /> : <Navigate to="/login" replace />}
+      />
     </Routes>
   )
 }

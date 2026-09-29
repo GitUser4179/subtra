@@ -4,6 +4,9 @@
 name: Build and deploy ASP.Net Core app to Azure Web App - subtra-api
 
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - main
@@ -26,6 +29,18 @@ jobs:
       - name: Build with dotnet
         run: dotnet build Subtra/Subtra.Api.csproj --configuration Release
 
+      - name: Install EF tool
+        run: dotnet tool install --global dotnet-ef --version 10.0.12
+
+      - name: Build migration bundle
+        run: dotnet ef migrations bundle --project Subtra/Subtra.Api.csproj --startup-project Subtra/Subtra.Api.csproj --configuration Release --output "${{ runner.temp }}/efbundle.exe"
+
+      - name: Upload migration bundle
+        uses: actions/upload-artifact@v7
+        with:
+          name: ef-migrations
+          path: ${{ runner.temp }}/efbundle.exe
+
       - name: dotnet publish
         run: dotnet publish Subtra/Subtra.Api.csproj -c Release --no-build -o "${{env.DOTNET_ROOT}}/myapp"
 
@@ -36,6 +51,7 @@ jobs:
           path: ${{env.DOTNET_ROOT}}/myapp
 
   deploy:
+    if: github.event_name != 'pull_request'
     runs-on: windows-latest
     needs: build
     permissions:
@@ -47,13 +63,28 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           name: .net-app
-      
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.x'
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: ef-migrations
+          path: migrations
+
       - name: Login to Azure
         uses: azure/login@v3
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_C7ACD46A2A744C5FA3A54634F514B1C0 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_B35EE85DBBF34B2E848FAD2DF4DFDE5E }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_4685CDF0BB414F64AD9B9F6359A0003A }}
+
+      - name: Apply EF migrations
+        shell: pwsh
+        env:
+          SQL_CONNECTION: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
+        run: .\migrations\efbundle.exe --connection "$env:SQL_CONNECTION"
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp

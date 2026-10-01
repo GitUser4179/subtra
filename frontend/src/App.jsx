@@ -6,6 +6,7 @@ import LoginPage from "./pages/LoginPage"
 import RegisterPage from "./pages/RegisterPage"
 import NotFoundPage from "./pages/NotFoundPage"
 import CategoriesPage from "./pages/CategoriesPage"
+import SubscriptionsPage from "./pages/SubscriptionsPage"
 
 function App() {
   const [billingIntervals, setBillingIntervals] = useState([])
@@ -66,6 +67,7 @@ function App() {
             <>
               <p>Signed in as {user.email}</p>
               <Link to="/categories">Categories</Link>
+              <Link to="/subscriptions">Subscriptions</Link>
               <button type="button" onClick={handleLogout}>
                 Log out
               </button>
@@ -95,6 +97,10 @@ function App() {
       <Route
         path="categories"
         element={user ? <CategoriesPage /> : <Navigate to="/login" replace />}
+      />
+      <Route
+        path="subscriptions"
+        element={user ? <SubscriptionsPage /> : <Navigate to="/login" replace />}
       />
     </Routes>
   )

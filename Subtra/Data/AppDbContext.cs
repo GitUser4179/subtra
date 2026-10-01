@@ -36,5 +36,8 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
             .WithMany()
             .HasForeignKey(s => s.CategoryId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Subscription>()
+            .HasIndex(s => new { s.UserId, s.CategoryId });
     }
 }

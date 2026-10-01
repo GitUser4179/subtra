@@ -2,10 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using Subtra.Api.Data;
 using Subtra.Api.Features.BillingIntervals;
 using Subtra.Api.Features.Auth;
+using Subtra.Api.Features.Subscriptions;
+using Subtra.Api.Features.Categories;
 using Scalar.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Subtra.Api.Features.Categories;
 
 namespace Subtra.Api;
 
@@ -58,6 +59,7 @@ public class Program
         builder.Services.AddScoped<BillingIntervalsService>();
         builder.Services.AddScoped<AuthService>();
         builder.Services.AddScoped<CategoryService>();
+        builder.Services.AddScoped<SubscriptionService>();
 
         // Add services to the container.
 

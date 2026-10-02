@@ -63,6 +63,7 @@ export default function CategoriesPage() {
   }
 
   async function handleDelete(id) {
+    if (!window.confirm("Delete this category?")) return
     setErrorMessage("")
     try {
       await deleteCategory(id)

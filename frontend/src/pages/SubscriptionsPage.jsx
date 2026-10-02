@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import { Link } from "react-router"
 import { Box, Button, MenuItem, TextField, Typography } from "@mui/material"
 import { getCategories } from "../features/categories/api"
 import { getBillingIntervals } from "../features/billing-intervals/api"
@@ -128,8 +127,6 @@ export default function SubscriptionsPage() {
       <Typography component="h1" variant="h4">
         Subscriptions
       </Typography>
-
-      <Link to="/">Home</Link>
 
       <Typography component="h2" variant="h6" sx={{ mt: 3 }}>
         {editingId === null ? "Add subscription" : "Edit subscription"}

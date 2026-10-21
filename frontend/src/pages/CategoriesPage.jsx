@@ -217,6 +217,7 @@ export default function CategoriesPage() {
                           <Button
                             type="button"
                             variant="outlined"
+                            aria-label={`Edit ${category.name}`}
                             onClick={() => {
                               setEditingId(category.id)
                               setEditName(category.name)
@@ -227,6 +228,7 @@ export default function CategoriesPage() {
                           <Button
                             type="button"
                             color="error"
+                            aria-label={`Delete ${category.name}`}
                             onClick={() => handleDelete(category.id)}
                           >
                             Delete

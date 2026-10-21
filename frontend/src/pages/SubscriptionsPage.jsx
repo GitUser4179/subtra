@@ -290,14 +290,18 @@ export default function SubscriptionsPage() {
             </CardContent>
           </Card>
         ) : subscriptions.length === 0 ? (
-          <Card>
-            <CardContent>
-              <Typography component="h3" variant="h6" sx={{ mb: 1 }}>
-                No subscriptions yet
-              </Typography>
-              <Typography color="text.secondary">No subscriptions found.</Typography>
-            </CardContent>
-          </Card>
+          errorMessage ? null : (
+            <Card>
+              <CardContent>
+                <Typography component="h3" variant="h6" sx={{ mb: 1 }}>
+                  No subscriptions found
+                </Typography>
+                <Typography color="text.secondary">
+                  There are no subscriptions in the current category selection.
+                </Typography>
+              </CardContent>
+            </Card>
+          )
         ) : filteredSubscriptions.length === 0 ? (
           <Card>
             <CardContent>
@@ -375,6 +379,7 @@ export default function SubscriptionsPage() {
                       <Button
                         type="button"
                         variant="outlined"
+                        aria-label={`Edit ${subscription.name}`}
                         onClick={() => startEditing(subscription)}
                       >
                         Edit
@@ -382,6 +387,7 @@ export default function SubscriptionsPage() {
                       <Button
                         type="button"
                         color="error"
+                        aria-label={`Delete ${subscription.name}`}
                         onClick={() => handleDelete(subscription.id)}
                       >
                         Delete

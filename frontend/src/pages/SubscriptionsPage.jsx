@@ -132,7 +132,14 @@ export default function SubscriptionsPage() {
   )
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: { xs: "column", sm: "row" },
+        gap: 2,
+        mt: 2,
+      }}
+    >
       <Typography component="h1" variant="h4">
         Subscriptions
       </Typography>
@@ -226,7 +233,7 @@ export default function SubscriptionsPage() {
         placeholder="Enter a subscription name"
         value={searchQuery}
         onChange={(event) => setSearchQuery(event.target.value)}
-        inputProps={{ "aria-label": "Search subscriptions by name" }}
+        slotProps={{ htmlInput: { "aria-label": "Search subscriptions by name" } }}
         sx={{ minWidth: 240, mt: 2, ml: 2 }}
       />
 

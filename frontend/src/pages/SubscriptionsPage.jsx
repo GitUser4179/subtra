@@ -74,28 +74,23 @@ export default function SubscriptionsPage() {
 
     try {
       if (editingId === null) {
-        const created = await createSubscription(
+        await createSubscription(
           name.trim(),
           Number(price),
           Number(categoryId),
           Number(billingIntervalId),
         )
-
-        setSubscriptions((current) => [...current, created])
       } else {
-        const updated = await updateSubscription(
+        await updateSubscription(
           editingId,
           name.trim(),
           Number(price),
           Number(categoryId),
           Number(billingIntervalId),
         )
-
-        setSubscriptions((current) =>
-          current.map((subscription) => (subscription.id === updated.id ? updated : subscription)),
-        )
       }
 
+      setSubscriptions(await getSubscriptions(categoryFilter))
       resetForm()
     } catch (error) {
       console.error(error)
@@ -119,9 +114,17 @@ export default function SubscriptionsPage() {
     }
   }
 
-  const visibleSubscriptions = subscriptions.filter(
-    (subscription) => categoryFilter === "" || String(subscription.categoryId) === categoryFilter,
-  )
+  async function handleFilterChange(value) {
+    setCategoryFilter(value)
+    setErrorMessage("")
+
+    try {
+      setSubscriptions(await getSubscriptions(value))
+    } catch (error) {
+      console.error(error)
+      setErrorMessage("Could not filter subscriptions.")
+    }
+  }
 
   const normalizedSearchQuery = searchQuery.trim().toLowerCase()
   const filteredSubscriptions = subscriptions.filter((subscription) =>
@@ -207,7 +210,7 @@ export default function SubscriptionsPage() {
         select
         label="Filter by category"
         value={categoryFilter}
-        onChange={(event) => setCategoryFilter(event.target.value)}
+        onChange={(event) => handleFilterChange(event.target.value)}
         sx={{ minWidth: 200, mt: 2 }}
       >
         <MenuItem value="">All categories</MenuItem>
@@ -229,7 +232,7 @@ export default function SubscriptionsPage() {
 
       {isLoading ? (
         <Typography>Loading subscriptions...</Typography>
-      ) : visibleSubscriptions.length === 0 ? (
+      ) : subscriptions.length === 0 ? (
         <Typography>No subscriptions found.</Typography>
       ) : filteredSubscriptions.length === 0 ? (
         <Typography>No subscriptions match your search.</Typography>

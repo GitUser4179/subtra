@@ -1,5 +1,14 @@
 import { useEffect, useState } from "react"
-import { Box, Button, MenuItem, TextField, Typography } from "@mui/material"
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  MenuItem,
+  TextField,
+  Typography,
+} from "@mui/material"
 import { getCategories } from "../features/categories/api"
 import { getBillingIntervals } from "../features/billing-intervals/api"
 import {
@@ -132,133 +141,259 @@ export default function SubscriptionsPage() {
   )
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: { xs: "column", sm: "row" },
-        gap: 2,
-        mt: 2,
-      }}
-    >
-      <Typography component="h1" variant="h4">
-        Subscriptions
-      </Typography>
-
-      <Typography component="h2" variant="h6" sx={{ mt: 3 }}>
-        {editingId === null ? "Add subscription" : "Edit subscription"}
-      </Typography>
-
-      <Box component="form" onSubmit={handleSubmit} sx={{ display: "grid", gap: 2, maxWidth: 400 }}>
-        <TextField
-          label="Name"
-          required
-          value={name}
-          onChange={(event) => setName(event.target.value)}
-        />
-
-        <TextField
-          label="Price in SEK"
-          type="number"
-          required
-          value={price}
-          onChange={(event) => setPrice(event.target.value)}
-          slotProps={{ htmlInput: { min: 0, step: "0.01" } }}
-        />
-
-        <TextField
-          select
-          label="Category"
-          required
-          value={categoryId}
-          onChange={(event) => setCategoryId(event.target.value)}
-        >
-          <MenuItem value="">Select a category</MenuItem>
-          {categories.map((category) => (
-            <MenuItem key={category.id} value={String(category.id)}>
-              {category.name}
-            </MenuItem>
-          ))}
-        </TextField>
-
-        <TextField
-          select
-          label="Billing interval"
-          required
-          value={billingIntervalId}
-          onChange={(event) => setBillingIntervalId(event.target.value)}
-        >
-          <MenuItem value="">Select an interval</MenuItem>
-          {billingIntervals.map((interval) => (
-            <MenuItem key={interval.id} value={String(interval.id)}>
-              {interval.name}
-            </MenuItem>
-          ))}
-        </TextField>
-
-        <Box sx={{ display: "flex", gap: 1 }}>
-          <Button type="submit" variant="contained">
-            {editingId === null ? "Add subscription" : "Save changes"}
-          </Button>
-          {editingId !== null && (
-            <Button type="button" onClick={resetForm}>
-              Cancel
-            </Button>
-          )}
-        </Box>
+    <Box sx={{ display: "grid", gap: 4 }}>
+      <Box>
+        <Typography component="h1" variant="h4">
+          Subscriptions
+        </Typography>
+        <Typography color="text.secondary" sx={{ mt: 1 }}>
+          Keep track of your recurring costs.
+        </Typography>
       </Box>
 
-      {errorMessage && <Typography role="alert">{errorMessage}</Typography>}
+      <Card>
+        <CardContent sx={{ p: { xs: 2.5, sm: 3 }, "&:last-child": { pb: 3 } }}>
+          <Typography component="h2" variant="h5" sx={{ mb: 2.5 }}>
+            {editingId === null ? "Add subscription" : "Edit subscription"}
+          </Typography>
 
-      <Typography component="h2" variant="h6" sx={{ mt: 4 }}>
-        Your subscriptions
-      </Typography>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))" },
+              gap: 2,
+            }}
+          >
+            <TextField
+              label="Name"
+              required
+              fullWidth
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+            />
 
-      <TextField
-        select
-        label="Filter by category"
-        value={categoryFilter}
-        onChange={(event) => handleFilterChange(event.target.value)}
-        sx={{ minWidth: 200, mt: 2 }}
-      >
-        <MenuItem value="">All categories</MenuItem>
-        {categories.map((category) => (
-          <MenuItem key={category.id} value={String(category.id)}>
-            {category.name}
-          </MenuItem>
-        ))}
-      </TextField>
+            <TextField
+              label="Price in SEK"
+              type="number"
+              required
+              fullWidth
+              value={price}
+              onChange={(event) => setPrice(event.target.value)}
+              slotProps={{ htmlInput: { min: 0, step: "0.01" } }}
+            />
 
-      <TextField
-        label="Search subscriptions"
-        placeholder="Enter a subscription name"
-        value={searchQuery}
-        onChange={(event) => setSearchQuery(event.target.value)}
-        slotProps={{ htmlInput: { "aria-label": "Search subscriptions by name" } }}
-        sx={{ minWidth: 240, mt: 2, ml: 2 }}
-      />
+            <TextField
+              select
+              label="Category"
+              required
+              fullWidth
+              value={categoryId}
+              onChange={(event) => setCategoryId(event.target.value)}
+            >
+              <MenuItem value="">Select a category</MenuItem>
+              {categories.map((category) => (
+                <MenuItem key={category.id} value={String(category.id)}>
+                  {category.name}
+                </MenuItem>
+              ))}
+            </TextField>
 
-      {isLoading ? (
-        <Typography>Loading subscriptions...</Typography>
-      ) : subscriptions.length === 0 ? (
-        <Typography>No subscriptions found.</Typography>
-      ) : filteredSubscriptions.length === 0 ? (
-        <Typography>No subscriptions match your search.</Typography>
-      ) : (
-        <ul>
-          {filteredSubscriptions.map((subscription) => (
-            <li key={subscription.id}>
-              {subscription.name} - {formatPrice.format(subscription.price)} -{" "}
-              {subscription.categoryName} - {subscription.billingIntervalName}
-              <Button type="button" onClick={() => startEditing(subscription)}>
-                Edit
+            <TextField
+              select
+              label="Billing interval"
+              required
+              fullWidth
+              value={billingIntervalId}
+              onChange={(event) => setBillingIntervalId(event.target.value)}
+            >
+              <MenuItem value="">Select an interval</MenuItem>
+              {billingIntervals.map((interval) => (
+                <MenuItem key={interval.id} value={String(interval.id)}>
+                  {interval.name}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            <Box
+              sx={{
+                gridColumn: { xs: "auto", sm: "1 / -1" },
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 1,
+              }}
+            >
+              <Button type="submit" variant="contained">
+                {editingId === null ? "Add subscription" : "Save changes"}
               </Button>
-              <Button type="button" color="error" onClick={() => handleDelete(subscription.id)}>
-                Delete
-              </Button>
-            </li>
-          ))}
-        </ul>
+
+              {editingId !== null && (
+                <Button type="button" variant="outlined" onClick={resetForm}>
+                  Cancel
+                </Button>
+              )}
+            </Box>
+          </Box>
+        </CardContent>
+      </Card>
+
+      {errorMessage && (
+        <Alert severity="error" role="alert">
+          {errorMessage}
+        </Alert>
       )}
+
+      <Box sx={{ display: "grid", gap: 2 }}>
+        <Typography component="h2" variant="h5">
+          Your subscriptions
+        </Typography>
+
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))" },
+            gap: 2,
+          }}
+        >
+          <TextField
+            select
+            label="Filter by category"
+            value={categoryFilter}
+            onChange={(event) => handleFilterChange(event.target.value)}
+            fullWidth
+          >
+            <MenuItem value="">All categories</MenuItem>
+            {categories.map((category) => (
+              <MenuItem key={category.id} value={String(category.id)}>
+                {category.name}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <TextField
+            label="Search subscriptions"
+            placeholder="Enter a subscription name"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            slotProps={{
+              htmlInput: { "aria-label": "Search subscriptions by name" },
+            }}
+            fullWidth
+          />
+        </Box>
+
+        {isLoading ? (
+          <Card>
+            <CardContent>
+              <Typography color="text.secondary">Loading subscriptions...</Typography>
+            </CardContent>
+          </Card>
+        ) : subscriptions.length === 0 ? (
+          <Card>
+            <CardContent>
+              <Typography component="h3" variant="h6" sx={{ mb: 1 }}>
+                No subscriptions yet
+              </Typography>
+              <Typography color="text.secondary">No subscriptions found.</Typography>
+            </CardContent>
+          </Card>
+        ) : filteredSubscriptions.length === 0 ? (
+          <Card>
+            <CardContent>
+              <Typography component="h3" variant="h6" sx={{ mb: 1 }}>
+                No matches
+              </Typography>
+              <Typography color="text.secondary">No subscriptions match your search.</Typography>
+            </CardContent>
+          </Card>
+        ) : (
+          <Box
+            component="ul"
+            sx={{
+              listStyle: "none",
+              p: 0,
+              m: 0,
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "repeat(2, minmax(0, 1fr))" },
+              gap: 2,
+            }}
+          >
+            {filteredSubscriptions.map((subscription) => (
+              <Box component="li" key={subscription.id} sx={{ minWidth: 0 }}>
+                <Card sx={{ height: "100%" }}>
+                  <CardContent
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "stretch",
+                      gap: 2,
+                      p: 2.5,
+                      "&:last-child": { pb: 2.5 },
+                    }}
+                  >
+                    <Box sx={{ minWidth: 0 }}>
+                      <Typography
+                        component="h3"
+                        variant="h6"
+                        sx={{ overflowWrap: "anywhere", mb: 1 }}
+                      >
+                        {subscription.name}
+                      </Typography>
+
+                      <Typography
+                        sx={{
+                          color: "primary.main",
+                          fontWeight: 750,
+                          fontSize: "1.35rem",
+                          fontVariantNumeric: "tabular-nums",
+                          overflowWrap: "anywhere",
+                        }}
+                      >
+                        {formatPrice.format(subscription.price)}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ display: "grid", gap: 0.5, minWidth: 0 }}>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ overflowWrap: "anywhere" }}
+                      >
+                        Category: {subscription.categoryName}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ overflowWrap: "anywhere" }}
+                      >
+                        Billing interval: {subscription.billingIntervalName}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: "auto" }}>
+                      <Button
+                        type="button"
+                        variant="outlined"
+                        onClick={() => startEditing(subscription)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        type="button"
+                        color="error"
+                        onClick={() => handleDelete(subscription.id)}
+                      >
+                        Delete
+                      </Button>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Box>
+            ))}
+          </Box>
+        )}
+      </Box>
     </Box>
   )
 }

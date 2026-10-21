@@ -27,6 +27,7 @@ export default function SubscriptionsPage() {
   const [billingIntervalId, setBillingIntervalId] = useState("")
   const [editingId, setEditingId] = useState(null)
   const [categoryFilter, setCategoryFilter] = useState("")
+  const [searchQuery, setSearchQuery] = useState("")
 
   useEffect(() => {
     async function loadPage() {
@@ -122,6 +123,11 @@ export default function SubscriptionsPage() {
     (subscription) => categoryFilter === "" || String(subscription.categoryId) === categoryFilter,
   )
 
+  const normalizedSearchQuery = searchQuery.trim().toLowerCase()
+  const filteredSubscriptions = subscriptions.filter((subscription) =>
+    subscription.name.toLowerCase().includes(normalizedSearchQuery),
+  )
+
   return (
     <Box sx={{ p: 3 }}>
       <Typography component="h1" variant="h4">
@@ -212,13 +218,24 @@ export default function SubscriptionsPage() {
         ))}
       </TextField>
 
+      <TextField
+        label="Search subscriptions"
+        placeholder="Enter a subscription name"
+        value={searchQuery}
+        onChange={(event) => setSearchQuery(event.target.value)}
+        inputProps={{ "aria-label": "Search subscriptions by name" }}
+        sx={{ minWidth: 240, mt: 2, ml: 2 }}
+      />
+
       {isLoading ? (
         <Typography>Loading subscriptions...</Typography>
       ) : visibleSubscriptions.length === 0 ? (
         <Typography>No subscriptions found.</Typography>
+      ) : filteredSubscriptions.length === 0 ? (
+        <Typography>No subscriptions match your search.</Typography>
       ) : (
         <ul>
-          {visibleSubscriptions.map((subscription) => (
+          {filteredSubscriptions.map((subscription) => (
             <li key={subscription.id}>
               {subscription.name} - {formatPrice.format(subscription.price)} -{" "}
               {subscription.categoryName} - {subscription.billingIntervalName}
